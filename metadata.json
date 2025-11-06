@@ -1,0 +1,7 @@
+{
+  "name": "The Digital Dollhouse Creator AI",
+  "description": "An all-in-one AI assistant to help creators generate, edit, and analyze social media content. Features include image/video generation & editing, a live AI assistant, content analysis, an AI chatbot, and text-to-speech capabilities.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
