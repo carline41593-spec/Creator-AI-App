@@ -23,20 +23,32 @@ export const generateImage = async (prompt: string, aspectRatio: string) => {
 };
 
 // Image Editing
-export const editImage = async (prompt: string, imageBase64: string, mimeType: string) => {
+export const editImage = async (
+  prompt: string,
+  sourceImage: { base64: string; mimeType: string },
+  referenceImage?: { base64: string; mimeType: string }
+) => {
   const ai = getGenAI();
+  const parts: ({ inlineData: { data: string, mimeType: string } } | { text: string })[] = [
+    { inlineData: { data: sourceImage.base64, mimeType: sourceImage.mimeType } },
+  ];
+
+  if (referenceImage) {
+    parts.push({ inlineData: { data: referenceImage.base64, mimeType: referenceImage.mimeType } });
+  }
+
+  parts.push({ text: prompt });
+
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
     contents: {
-      parts: [
-        { inlineData: { data: imageBase64, mimeType } },
-        { text: prompt },
-      ],
+      parts,
     },
     config: {
       responseModalities: [Modality.IMAGE],
     },
   });
+
   const part = response.candidates?.[0]?.content?.parts?.[0];
   if (part?.inlineData) {
     return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
